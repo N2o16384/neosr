@@ -92,6 +92,8 @@ def parse_options(
         "-net", "--network", type=str, required=False, help="Generator network."
     )
 
+    group.add_argument("-netconf", "--netconf", type=str, required=False, nargs='*', help='Fields to config net')
+
     group.add_argument("-s", "--scale", type=int, help="Model scale ratio.", default=4)
 
     group.add_argument(
@@ -128,6 +130,14 @@ def parse_options(
     )
 
     group.add_argument(
+        "-fpmix",
+        "--fpmix",
+        action="store_true",
+        help="Enable mixed-precision. (default: false)",
+        default=False,
+    )
+
+    group.add_argument(
         "-optimize",
         "--optimize",
         action="store_true",
@@ -148,7 +158,7 @@ def parse_options(
         type=str,
         required=False,
         help="Output ONNX model path.",
-        default=root_path,
+        default=None,
     )
 
     args = parser.parse_args()

@@ -811,13 +811,26 @@ class image(base):
     ) -> None:
         log_str = f"Validation {dataset_name}\n\n"
         for metric, value in self.metric_results.items():
-            log_str += f"\t # {metric}: {value:.4f}"
+            metric_str=""; best_metric_str = ""
+            best_metric=float("-inf"); prev_metric=float("-inf"); prev_best_metric=float("-inf")
             if hasattr(self, "best_metric_results"):
-                log_str += (
-                    f"{tc.light_green}........ Best: {self.best_metric_results[dataset_name][metric]['val']:.4f} @ "
+                prev_metric = self.best_metric_results[dataset_name][metric]['peval']
+                prev_best_metric = self.best_metric_results[dataset_name][metric]['pbval']
+                best_metric = self.best_metric_results[dataset_name][metric]['val']
+                metric_str=f"{metric}: {value:.4f}"
+                best_metric_str=(
+                    f"Best: {best_metric:.4f} @ "
                     f"{self.best_metric_results[dataset_name][metric]['iter']} iter{tc.end}"
                 )
-            log_str += "\n"
+            if value > prev_metric:
+                metric_str = f"{tc.bold}{tc.light_green}{metric_str}{tc.end}" 
+            else:
+                metric_str = f"{tc.end}{tc.bold}{metric_str}{tc.end}" 
+            if best_metric > prev_best_metric:
+                best_metric_str = f"{tc.light_green}{best_metric_str}{tc.end}" 
+            else:
+                best_metric_str = f"{tc.end}{tc.bold}{best_metric_str}{tc.end}" 
+            log_str += f"\t # {metric_str}........{best_metric_str}\n"
 
         logger = get_root_logger()
         logger.info(log_str)

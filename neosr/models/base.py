@@ -101,12 +101,15 @@ class base:
         for metric, content in self.opt["val"]["metrics"].items():
             better = content.get("better", "higher")
             init_val = float("-inf") if better == "higher" else float("inf")
-            record[metric] = {"better": better, "val": init_val, "iter": -1}
+            record[metric] = {"better": better, "peval":init_val, "eval":init_val,"pbval":init_val, "val": init_val, "iter": -1}
         self.best_metric_results[dataset_name] = record
 
     def _update_best_metric_result(
         self, dataset_name, metric: str, val, current_iter: int
     ) -> None:
+        self.best_metric_results[dataset_name][metric]["peval"] = self.best_metric_results[dataset_name][metric]["eval"]
+        self.best_metric_results[dataset_name][metric]["pbval"] = self.best_metric_results[dataset_name][metric]["val"]
+        self.best_metric_results[dataset_name][metric]["eval"] = val
         if self.best_metric_results[dataset_name][metric]["better"] == "higher":
             if val >= self.best_metric_results[dataset_name][metric]["val"]:
                 self.best_metric_results[dataset_name][metric]["val"] = val
